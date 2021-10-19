@@ -197,7 +197,7 @@ VOID DispatchCallback(ULONG64 pRsp) {
 				if (RspOffset == 0) {
 					if (Rsp[0] == 0x1122334455667788) {
 						if (Rsp[1] == 0x8877665544772299) {
-							//ËÑË÷Õ»ÉÏObjectÆ«ÒÆ
+							//æœç´¢æ ˆä¸ŠObjectåç§»
 							ULONG64 OLRSP = (ULONG64)Rsp;
 							for (int j = 0; OLRSP > pRsp && j < 0x1000; OLRSP -= 8, j += 8) {
 								if (*(ULONG64*)OLRSP == NtDeviceIoControlFileRet) {
@@ -226,7 +226,7 @@ VOID DispatchCallback(ULONG64 pRsp) {
 				if (RspOffset_NtQuery == 0 && DispatchControl::enable_ntq) {
 					if (Rsp[0] == 0xCC22334455666688) {
 						if (Rsp[1] == 0xAA77665544333399) {
-							//ËÑË÷Õ»ÉÏObjectÆ«ÒÆ
+							//æœç´¢æ ˆä¸Šå‚æ•°åç§»
 							ULONG64 OLRSP = (ULONG64)Rsp;
 							for (int j = 0; OLRSP > pRsp && j < 0x800; OLRSP -= 8, j += 8) {
 								if (*(ULONG64*)OLRSP == NtQueryVolumeInformationFileRet) {
@@ -250,7 +250,7 @@ VOID DispatchCallback(ULONG64 pRsp) {
 										}
 
 									}
-									//ËÑ²»µ½¾ÍÀ¶ÆÁ
+									//æœä¸åˆ°å°±è“å±
 									if (NtQuery_Offset_Length == 0) {
 										KeBugCheck(0x33221);
 									}
@@ -458,7 +458,7 @@ VOID InstallHook(fnIoCtlPostCallback PostCallback, PVOID PreCallback, PVOID NtQu
 
 	ULONG bn = KGetBuildNumber();
 
-	//ËÑË÷µ÷ÓÃNtDeviceIoControlFileµÄÊ±ºò¶ÑÕ»ÖÐ»á³öÏÖµÄ·µ»ØµØÖ·
+	//æœç´¢è°ƒç”¨NtDeviceIoControlFileçš„æ—¶å€™å †æ ˆä¸­ä¼šå‡ºçŽ°çš„è¿”å›žåœ°å€
 	//E8 ?? ?? ?? ?? 48 8B D8 48 89 84 24 ?? ?? ?? ?? 48 85 C0
 	//E8 ?? ?? ?? ?? 48 83 C4
 	ULONG64 pNtDeviceIoControlFile = (ULONG64)KGetProcAddress((PVOID)ntos, "NtDeviceIoControlFile");
@@ -473,7 +473,7 @@ VOID InstallHook(fnIoCtlPostCallback PostCallback, PVOID PreCallback, PVOID NtQu
 	//printf("[112233] NtDeviceIoControlFileRet %p\n", NtDeviceIoControlFileRet);
 	//printf("[112233] NtFsControlFileRet %p\n", NtFsControlFileRet);
 
-	//ËÑË÷µ÷ÓÃNtQueryVolumeInformationFileµÄÊ±ºò¶ÑÕ»ÖÐ»á³öÏÖµÄ·µ»ØµØÖ·
+	//æœç´¢è°ƒç”¨NtQueryVolumeInformationFileçš„æ—¶å€™å †æ ˆä¸­ä¼šå‡ºçŽ°çš„è¿”å›žåœ°å€
 	//NtQueryVolumeInformationFileRet
 	ULONG64 pNtQueryVolumeInformationFile = (ULONG64)KGetProcAddress((PVOID)ntos, "NtQueryVolumeInformationFile");
 	if (BuildNumber < WIN10_1507) {
@@ -545,7 +545,7 @@ VOID InstallHook(fnIoCtlPostCallback PostCallback, PVOID PreCallback, PVOID NtQu
 	memcpy(pcode, shellcode, sizeof(shellcode));
 	*(ULONG64 *)(pcode + 0x22) = ((ULONG64)DispatchCallback) ^ 0x7fffffff;
 
-	//ÐÞ¸ÄViPacketLookaside.AllocEx
+	//ä¿®æ”¹ViPacketLookaside.AllocEx
 	ULONG64 pfn = *(ULONG64*)(ViPacketLookaside + 0x30);
 	
 	LARGE_INTEGER Addr;
@@ -599,7 +599,7 @@ VOID FnNtQueryPreCallback(HOOK_NTQUERY_CONTEXT *aContext) {
 }
 
 BOOL DICPostCallback(HOOK_DEVICE_IO_CONTEXT* Context) {
-	//ÌáÉýirqlÖÁ2,¹Ø±Õsmap
+	//æå‡irqlè‡³2,å…³é—­smap
 	IRQL_STATE state;
 	KRaiseIrqlToDpcOrHigh(&state);
 	Cr4 cr4;
@@ -618,7 +618,7 @@ BOOL DICPostCallback(HOOK_DEVICE_IO_CONTEXT* Context) {
 	return ret;
 }
 VOID DICPreCallback(HOOK_DEVICE_IO_CONTEXT* aContext) {
-	//ÌáÉýirqlÖÁ2,¹Ø±Õsmap
+	//æå‡irqlè‡³2,å…³é—­smap
 	IRQL_STATE state;
 	KRaiseIrqlToDpcOrHigh(&state);
 	Cr4 cr4;
@@ -636,7 +636,7 @@ VOID DICPreCallback(HOOK_DEVICE_IO_CONTEXT* aContext) {
 	KLowerIrqlToState(&state);
 }
 VOID NtQueryPreCallback(HOOK_NTQUERY_CONTEXT* aContext) {
-	//ÌáÉýirqlÖÁ2,¹Ø±Õsmap
+	//æå‡irqlè‡³2,å…³é—­smap
 	IRQL_STATE state;
 	KRaiseIrqlToDpcOrHigh(&state);
 	Cr4 cr4;
