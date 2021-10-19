@@ -1,5 +1,8 @@
+//author :cslime
+//https://github.com/CS1ime/DICHook
+
 #include "DDKCommon.h"
-#include "HwidHook.h"
+#include "DICHook.h"
 #include "ntddndis.h"
 #include "kernelasm.h"
 #include "ntifs.h"
@@ -194,7 +197,7 @@ VOID DispatchCallback(ULONG64 pRsp) {
 				if (RspOffset == 0) {
 					if (Rsp[0] == 0x1122334455667788) {
 						if (Rsp[1] == 0x8877665544772299) {
-							//DbgBreakPoint();
+							//搜索栈上Object偏移
 							ULONG64 OLRSP = (ULONG64)Rsp;
 							for (int j = 0; OLRSP > pRsp && j < 0x1000; OLRSP -= 8, j += 8) {
 								if (*(ULONG64*)OLRSP == NtDeviceIoControlFileRet) {
@@ -223,6 +226,7 @@ VOID DispatchCallback(ULONG64 pRsp) {
 				if (RspOffset_NtQuery == 0 && DispatchControl::enable_ntq) {
 					if (Rsp[0] == 0xCC22334455666688) {
 						if (Rsp[1] == 0xAA77665544333399) {
+							//搜索栈上Object偏移
 							ULONG64 OLRSP = (ULONG64)Rsp;
 							for (int j = 0; OLRSP > pRsp && j < 0x800; OLRSP -= 8, j += 8) {
 								if (*(ULONG64*)OLRSP == NtQueryVolumeInformationFileRet) {
@@ -246,6 +250,7 @@ VOID DispatchCallback(ULONG64 pRsp) {
 										}
 
 									}
+									//搜不到就蓝屏
 									if (NtQuery_Offset_Length == 0) {
 										KeBugCheck(0x33221);
 									}
@@ -291,10 +296,10 @@ VOID DispatchCallback(ULONG64 pRsp) {
 				lContext.Object = (PVOID)Object;
 
 				if (g_IoCtlPostCallback(&lContext)) {
-					HOOK_DEVICE_IO_CONTEXT *Context = (HOOK_DEVICE_IO_CONTEXT *)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(lContext), POOL_TAG);
+					HOOK_DEVICE_IO_CONTEXT *Context = (HOOK_DEVICE_IO_CONTEXT *)ExAllocatePool(NonPagedPoolNx, sizeof(lContext));
 					RtlZeroMemory(Context, sizeof(HOOK_DEVICE_IO_CONTEXT));
 					memcpy(Context, &lContext, sizeof(lContext));
-					PUCHAR JmpPage = (PUCHAR)ExAllocatePoolWithTag(NonPagedPool, sizeof(shellcode)+1, POOL_TAG);
+					PUCHAR JmpPage = (PUCHAR)ExAllocatePool(NonPagedPool, sizeof(shellcode)+1);
 					memcpy(JmpPage, shellcode, sizeof(shellcode));
 					ULONG offset = 0;
 					*(ULONG64 *)(JmpPage + 0x2 + offset) = *(ULONG64 *)(LRSP + 0x70);
@@ -322,14 +327,14 @@ VOID DispatchCallback(ULONG64 pRsp) {
 
 				printf("[112233] NtQ Class %d FsInfomation %p Length %x\n", FsInfomationClass, FsInformation, Length);
 
-				HOOK_NTQUERY_CONTEXT* Context = (HOOK_NTQUERY_CONTEXT*)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(HOOK_NTQUERY_CONTEXT), POOL_TAG);
+				HOOK_NTQUERY_CONTEXT* Context = (HOOK_NTQUERY_CONTEXT*)ExAllocatePool(NonPagedPoolNx, sizeof(HOOK_NTQUERY_CONTEXT));
 				RtlZeroMemory(Context, sizeof(HOOK_NTQUERY_CONTEXT));
 
 				Context->FsInformation = FsInformation;
 				Context->FsInformationClass = FsInfomationClass;
 				Context->Length = Length;
 
-				PUCHAR JmpPage = (PUCHAR)ExAllocatePoolWithTag(NonPagedPool, sizeof(shellcode)+1, POOL_TAG);
+				PUCHAR JmpPage = (PUCHAR)ExAllocatePool(NonPagedPool, sizeof(shellcode)+1);
 				memcpy(JmpPage, shellcode, sizeof(shellcode));
 				ULONG offset = 0;
 				*(ULONG64 *)(JmpPage + 0x2 + offset) = *(ULONG64 *)(LRSP + 8 + NtQuery_StackSize);
@@ -369,7 +374,6 @@ VOID InstallHook(fnIoCtlPostCallback PostCallback, PVOID PreCallback, PVOID NtQu
 	if (!InitStackSize())KeBugCheck(0x897877);
 	ULONG BuildNumber = KGetBuildNumber();
 	ULONG64 ntos = (ULONG64)KGetNtoskrnl();
-	ULONG offset = 0;
 
 	ULONG64 ViPacketLookaside = 0;
 	//ViPacketLookaside
@@ -454,8 +458,8 @@ VOID InstallHook(fnIoCtlPostCallback PostCallback, PVOID PreCallback, PVOID NtQu
 
 	ULONG bn = KGetBuildNumber();
 
+	//搜索调用NtDeviceIoControlFile的时候堆栈中会出现的返回地址
 	//E8 ?? ?? ?? ?? 48 8B D8 48 89 84 24 ?? ?? ?? ?? 48 85 C0
-
 	//E8 ?? ?? ?? ?? 48 83 C4
 	ULONG64 pNtDeviceIoControlFile = (ULONG64)KGetProcAddress((PVOID)ntos, "NtDeviceIoControlFile");
 	pos = FindSignatureCode_nocheck((LPCVOID)pNtDeviceIoControlFile, 0x200, "E8????????4883C4", 0);
@@ -468,10 +472,9 @@ VOID InstallHook(fnIoCtlPostCallback PostCallback, PVOID PreCallback, PVOID NtQu
 	NtFsControlFileRet = pos + pNtFsControlFile + 5;
 	//printf("[112233] NtDeviceIoControlFileRet %p\n", NtDeviceIoControlFileRet);
 	//printf("[112233] NtFsControlFileRet %p\n", NtFsControlFileRet);
-	//DbgPrint("[112233] IoCreateFileRet:%p\n", IoCreateFileRet);
-	//45 33 C9 ?? ?? ?? ?? 48 8B 15 ?? ?? ?? ?? ?? 8B ?? E8 ?? ?? ?? ?? 
-	//DbgPrint("[112233] IopCreateFileRet:%p\n", IopCreateFileRet);
-	//DbgBreakPoint();
+
+	//搜索调用NtQueryVolumeInformationFile的时候堆栈中会出现的返回地址
+	//NtQueryVolumeInformationFileRet
 	ULONG64 pNtQueryVolumeInformationFile = (ULONG64)KGetProcAddress((PVOID)ntos, "NtQueryVolumeInformationFile");
 	if (BuildNumber < WIN10_1507) {
 		//4C E8 ?? ?? ?? ?? 48
@@ -538,25 +541,17 @@ VOID InstallHook(fnIoCtlPostCallback PostCallback, PVOID PreCallback, PVOID NtQu
 	*(ULONG64*)(pNtQueryRetCodePage + 0x1D) = ((ULONG64)NtQueryPre) ^ 0x7fffffff;
 	g_IoCtlPostCallback = PostCallback;
 
-
 	PUCHAR pcode = (PUCHAR)ExAllocatePool(NonPagedPool, 0x500);
 	memcpy(pcode, shellcode, sizeof(shellcode));
-	*(ULONG64 *)(pcode + 0x22 + offset) = ((ULONG64)DispatchCallback) ^ 0x7fffffff;
+	*(ULONG64 *)(pcode + 0x22) = ((ULONG64)DispatchCallback) ^ 0x7fffffff;
+
+	//修改ViPacketLookaside.AllocEx
 	ULONG64 pfn = *(ULONG64*)(ViPacketLookaside + 0x30);
-	ULONG64 Origin = pfn;
-	if (MmiGetPhysicalAddress((PVOID)pfn)) {
-		if (*(ULONG64*)pfn == *(ULONG64*)shellcode) {
-			LARGE_INTEGER new_addr;
-			new_addr.LowPart = *(ULONG*)(pfn + 0x5A + offset);
-			new_addr.HighPart = *(ULONG*)(pfn + 0x62 + offset);
-			Origin = new_addr.QuadPart;
-		}
-	}
 	
 	LARGE_INTEGER Addr;
 	Addr.QuadPart = (ULONG64)MyAllocEx;
-	*(ULONG *)(pcode + 0x5A + offset) = Addr.LowPart;
-	*(ULONG *)(pcode + 0x62 + offset) = Addr.HighPart;
+	*(ULONG *)(pcode + 0x5A) = Addr.LowPart;
+	*(ULONG *)(pcode + 0x62) = Addr.HighPart;
 	InterlockedExchange64((volatile LONG64*)(ViPacketLookaside + 0x30), (LONG64)pcode);
 
 	*(DWORD*)(pcode + sizeof(shellcode)) = 0xDEADBEEF;
@@ -564,7 +559,6 @@ VOID InstallHook(fnIoCtlPostCallback PostCallback, PVOID PreCallback, PVOID NtQu
 	*(int*)(VfIoDisabled) = 0;
 	
 	KeLowerIrql(irql);
-	//*(int *)(IopDispatchAllocateIrp) = 1;
 	TestDeviceIoControl();
 	TestNtQueryVolumeInformationFile();
 
@@ -585,8 +579,8 @@ BOOL FnDICPostCallback(HOOK_DEVICE_IO_CONTEXT *Context) {
 VOID FnDICPreCallback(HOOK_DEVICE_IO_CONTEXT *aContext){
 	if (aContext) {
 		HOOK_DEVICE_IO_CONTEXT Context = *aContext;
-		ExFreePoolWithTag(Context.JmpPage, POOL_TAG);
-		ExFreePoolWithTag(aContext, POOL_TAG);
+		ExFreePool(Context.JmpPage);
+		ExFreePool(aContext);
 		if (dicprecabk) {
 			dicprecabk(Context.IoControlCode, Context.InputBuffer, Context.InputBufferLength, Context.OutputBuffer, Context.OutputBufferLength);
 		}
@@ -595,8 +589,8 @@ VOID FnDICPreCallback(HOOK_DEVICE_IO_CONTEXT *aContext){
 VOID FnNtQueryPreCallback(HOOK_NTQUERY_CONTEXT *aContext) {
 	if (aContext) {
 		HOOK_NTQUERY_CONTEXT Context = *aContext;
-		ExFreePoolWithTag(Context.JmpPage, POOL_TAG);
-		ExFreePoolWithTag(aContext, POOL_TAG);
+		ExFreePool(Context.JmpPage);
+		ExFreePool(aContext);
 		
 		if (ntqcabk) {
 			ntqcabk(Context.FsInformationClass, Context.FsInformation, Context.Length);

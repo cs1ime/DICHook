@@ -1,6 +1,9 @@
+//author :cslime
+//https://github.com/CS1ime/DICHook
+
 #include "DDKCommon.h"
 #include "MyMemoryIo64.h"
-#include "HwidHook.h"
+#include "DICHook.h"
 #include <ntddndis.h>
 
 VOID NtDeviceIoControlFileCallback(ULONG64 IoControlCode, ULONG64 InputBuffer, ULONG64 InputBufferLength, ULONG64 OutputBuffer, ULONG64 OutputBufferLength) {

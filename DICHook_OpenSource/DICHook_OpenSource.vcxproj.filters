@@ -27,7 +27,7 @@
     <ClCompile Include="DDKCommon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HwidHook.cpp">
+    <ClCompile Include="DICHook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
@@ -41,7 +41,7 @@
     <ClInclude Include="DDKCommon.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="HwidHook.h">
+    <ClInclude Include="DICHook.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="KernelAsm.h">
