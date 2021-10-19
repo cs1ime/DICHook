@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31515.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DICHook_OpenSource", "DICHook_OpenSource\DICHook_OpenSource.vcxproj", "{788C82FC-D258-4C61-A8DA-C12DC560FCAD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Debug|ARM.ActiveCfg = Debug|ARM
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Debug|ARM.Build.0 = Debug|ARM
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Debug|ARM.Deploy.0 = Debug|ARM
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Debug|ARM64.Build.0 = Debug|ARM64
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Debug|x64.ActiveCfg = Debug|x64
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Debug|x64.Build.0 = Debug|x64
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Debug|x64.Deploy.0 = Debug|x64
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Debug|x86.ActiveCfg = Debug|Win32
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Debug|x86.Build.0 = Debug|Win32
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Debug|x86.Deploy.0 = Debug|Win32
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Release|ARM.ActiveCfg = Release|ARM
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Release|ARM.Build.0 = Release|ARM
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Release|ARM.Deploy.0 = Release|ARM
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Release|ARM64.ActiveCfg = Release|ARM64
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Release|ARM64.Build.0 = Release|ARM64
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Release|ARM64.Deploy.0 = Release|ARM64
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Release|x64.ActiveCfg = Release|x64
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Release|x64.Build.0 = Release|x64
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Release|x64.Deploy.0 = Release|x64
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Release|x86.ActiveCfg = Release|Win32
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Release|x86.Build.0 = Release|Win32
+		{788C82FC-D258-4C61-A8DA-C12DC560FCAD}.Release|x86.Deploy.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0F5EA8A1-6BCE-462A-87DA-DD9CA15E4D26}
+	EndGlobalSection
+EndGlobal
