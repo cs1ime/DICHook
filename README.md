@@ -1,2 +1,2 @@
 # DICHook
-Hook NtDeviceIoControlFile with PatchGuard
+Hook NtDeviceIoControlFile function with PatchGuard
