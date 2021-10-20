@@ -397,6 +397,7 @@ VOID InstallHook(fnIoCtlPostCallback PostCallback, PVOID PreCallback, PVOID NtQu
 		}
 	}
 	if (!ViPacketLookaside) {
+		//搜不到蓝屏
 		KeBugCheck(0x957778);
 	}
 	//DbgPrint("[112233] ViPacketLookaside %p\n", ViPacketLookaside);
@@ -411,6 +412,7 @@ VOID InstallHook(fnIoCtlPostCallback PostCallback, PVOID PreCallback, PVOID NtQu
 		ULONG64 VfInitVerifierComponents = *(LONG *)(pos + 3) + pos + 7;
 		typedef ULONG64(*fnVfInitVerifierComponents)(ULONG64, ULONG64, ULONG64);
 		fnVfInitVerifierComponents v = (fnVfInitVerifierComponents)VfInitVerifierComponents;
+		//初始化ViPacketLookaside
 		v(0, 0, 0);
 	}
 	ULONG64 VfIoDisabled = 0;
