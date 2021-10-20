@@ -545,16 +545,16 @@ VOID InstallHook(fnIoCtlPostCallback PostCallback, PVOID PreCallback, PVOID NtQu
 
 	PUCHAR pcode = (PUCHAR)ExAllocatePool(NonPagedPool, 0x500);
 	memcpy(pcode, shellcode, sizeof(shellcode));
-	*(ULONG64 *)(pcode + 0x22) = ((ULONG64)DispatchCallback) ^ 0x7fffffff;
+	*(ULONG64 *)(pcode + 0x22) = ((ULONG64)DispatchCallback) ^ 0x7fffffff;//回调函数
 
 	//ViPacketLookaside.Region=0
 	//防止RtlpInterlockedPopEntrySList返回非0值
 	*(ULONG64*)(ViPacketLookaside + 0x8) = 0;
-	//修改ViPacketLookaside.AllocEx
+	//修改ViPacketLookaside.AllocateEx
 	ULONG64 pfn = *(ULONG64*)(ViPacketLookaside + 0x30);
 	
 	LARGE_INTEGER Addr;
-	Addr.QuadPart = (ULONG64)MyAllocEx;
+	Addr.QuadPart = (ULONG64)MyAllocEx; //使ViPacketLookaside.L. AllocateEx最终返回0
 	*(ULONG *)(pcode + 0x5A) = Addr.LowPart;
 	*(ULONG *)(pcode + 0x62) = Addr.HighPart;
 	InterlockedExchange64((volatile LONG64*)(ViPacketLookaside + 0x30), (LONG64)pcode);
@@ -564,6 +564,7 @@ VOID InstallHook(fnIoCtlPostCallback PostCallback, PVOID PreCallback, PVOID NtQu
 	*(int*)(VfIoDisabled) = 0;
 	
 	KeLowerIrql(irql);
+	//模拟调用函数以确定参数在堆栈中的偏移
 	TestDeviceIoControl();
 	TestNtQueryVolumeInformationFile();
 
