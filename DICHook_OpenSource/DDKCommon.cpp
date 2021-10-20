@@ -1,3 +1,6 @@
+//author :cslime
+//https://github.com/CS1ime/DICHook
+
 #include "DDKCommon.h"
 #include "MyMemoryIo64.h"
 #pragma comment(lib,"oldnames.lib")

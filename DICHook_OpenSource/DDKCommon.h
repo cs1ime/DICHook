@@ -1,3 +1,6 @@
+//author :cslime
+//https://github.com/CS1ime/DICHook
+
 #pragma once
 #ifndef __DDKCOMMON_INCLUDED_
 

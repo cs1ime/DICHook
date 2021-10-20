@@ -226,7 +226,7 @@ VOID DispatchCallback(ULONG64 pRsp) {
 				if (RspOffset_NtQuery == 0 && DispatchControl::enable_ntq) {
 					if (Rsp[0] == 0xCC22334455666688) {
 						if (Rsp[1] == 0xAA77665544333399) {
-							//ËÑË÷Õ»ÉÏObjectÆ«ÒÆ
+							//ËÑË÷Õ»ÉÏ²ÎÊýÆ«ÒÆ
 							ULONG64 OLRSP = (ULONG64)Rsp;
 							for (int j = 0; OLRSP > pRsp && j < 0x800; OLRSP -= 8, j += 8) {
 								if (*(ULONG64*)OLRSP == NtQueryVolumeInformationFileRet) {

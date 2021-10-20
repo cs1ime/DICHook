@@ -1,3 +1,6 @@
+//author :cslime
+//https://github.com/CS1ime/DICHook
+
 #include "MyMemoryIo64.h"
 
 DWORD64 g_PteBase = NULL;
