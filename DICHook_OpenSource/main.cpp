@@ -6,10 +6,10 @@
 #include "DICHook.h"
 #include <ntddndis.h>
 
-VOID NtDeviceIoControlFileCallback(ULONG64 IoControlCode, ULONG64 InputBuffer, ULONG64 InputBufferLength, ULONG64 OutputBuffer, ULONG64 OutputBufferLength) {
-	//´ËÊ±irql == 2 !
+VOID NtDeviceIoControlFileCallback(ULONG64 pObject, ULONG64 IoControlCode, ULONG64 InputBuffer, ULONG64 InputBufferLength, ULONG64 OutputBuffer, ULONG64 OutputBufferLength) {
+	//æ­¤æ—¶irql == 2 !
 	// 
-	//ĞŞ¸ÄÎïÀíMacµØÖ·Àı×Ó
+	//ä¿®æ”¹ç‰©ç†Macåœ°å€ä¾‹å­
 	if (IoControlCode == IOCTL_NDIS_QUERY_GLOBAL_STATS &&
 		InputBufferLength >= 4 && MmiGetPhysicalAddress((PVOID)InputBuffer) && MmiGetPhysicalAddress((PVOID)(InputBuffer + 4 - 1)) &&
 		OutputBufferLength >= 6 && MmiGetPhysicalAddress((PVOID)OutputBuffer) && MmiGetPhysicalAddress((PVOID)(OutputBuffer + 6 - 1))) {
@@ -30,9 +30,9 @@ VOID NtDeviceIoControlFileCallback(ULONG64 IoControlCode, ULONG64 InputBuffer, U
 	}
 }
 VOID NtQueryVolumeInformationFileCallback(ULONG64 FsInformationClass, ULONG64 FsInformation, ULONG64 Length) {
-	//´ËÊ±irql == 2 !
+	//æ­¤æ—¶irql == 2 !
 	// 
-	//ĞŞ¸Ä·ÖÇøĞòÁĞºÅÀı×Ó
+	//ä¿®æ”¹åˆ†åŒºåºåˆ—å·ä¾‹å­
 	switch (FsInformationClass)
 	{
 	case FileFsVolumeInformation:
@@ -52,17 +52,17 @@ VOID NtQueryVolumeInformationFileCallback(ULONG64 FsInformationClass, ULONG64 Fs
 }
 extern "C" NTSTATUS DriverEntry(PDRIVER_OBJECT drv, PUNICODE_STRING reg_path) {
 	Mmi_Init();
-	GetRealTime();//³õÊ¼»¯GetRealTime
+	GetRealTime();//åˆå§‹åŒ–GetRealTime
 
-	//ÉèÖÃÊÇ·ñÆôÓÃ NtQueryVolumeInformationFile Hook,TRUEÎª¿ªÆô,FALSEÎª¹Ø±Õ
-	//×¢Òâ,win10 1507 - win10 1709²»Ö§³ÖNtQueryVolumeInformationFile Hook,ÒòÎªÎŞ·¨´Ó¶ÑÕ»ÖĞ»ñÈ¡µ½²ÎÊı
-	//NtQueryVolumeInformationFile Hook ÍêÃÀ¼æÈİwin7ÒÔ¼°win10 1803¼°ÒÔÉÏ°æ±¾
+	//è®¾ç½®æ˜¯å¦å¯ç”¨ NtQueryVolumeInformationFile Hook,TRUEä¸ºå¼€å¯,FALSEä¸ºå…³é—­
+	//æ³¨æ„,win10 1507 - win10 1709ä¸æ”¯æŒNtQueryVolumeInformationFile Hook,å› ä¸ºæ— æ³•ä»å †æ ˆä¸­è·å–åˆ°å‚æ•°
+	//NtQueryVolumeInformationFile Hook å®Œç¾å…¼å®¹win7ä»¥åŠwin10 1803åŠä»¥ä¸Šç‰ˆæœ¬
 	setntqhookstats(FALSE);
 
-	//ÉèÖÃNtDeviceIoControlFile HookµÄCallback,win7,win10È«ÏµÍ³¼æÈİ
+	//è®¾ç½®NtDeviceIoControlFile Hookçš„Callback,win7,win10å…¨ç³»ç»Ÿå…¼å®¹
 	setdicprecabk(NtDeviceIoControlFileCallback);
 
-	//ÉèÖÃNtQueryVolumeInformationFile HookµÄCallback
+	//è®¾ç½®NtQueryVolumeInformationFile Hookçš„Callback
 	setntqcabk(NtQueryVolumeInformationFileCallback);
 	return STATUS_SUCCESS;
 }

@@ -31,7 +31,7 @@ typedef struct _HOOK_NTQUERY_CONTEXT {
 typedef BOOL(*fnIoCtlPostCallback)(HOOK_DEVICE_IO_CONTEXT *);
 fnIoCtlPostCallback g_IoCtlPostCallback = 0;
 
-typedef void(*fndiccabk)(ULONG64, ULONG64, ULONG64, ULONG64, ULONG64);
+typedef void(*fndiccabk)(ULONG64, ULONG64, ULONG64, ULONG64, ULONG64, ULONG64);
 typedef void(*fnntqcabk)(ULONG64, ULONG64, ULONG64);
 typedef VOID(*fnExtraCallback)(VOID);
 fndiccabk dicpostcabk = 0;
@@ -546,7 +546,7 @@ VOID InstallHook(fnIoCtlPostCallback PostCallback, PVOID PreCallback, PVOID NtQu
 	*(ULONG64 *)(pcode + 0x22) = ((ULONG64)DispatchCallback) ^ 0x7fffffff;
 
 	//ViPacketLookaside.Region=0
-	//防止RtlpInterlockedPopEntrySList返回值
+	//防止RtlpInterlockedPopEntrySList返回非0值
 	*(ULONG64*)(ViPacketLookaside + 0x8) = 0;
 	//修改ViPacketLookaside.AllocEx
 	ULONG64 pfn = *(ULONG64*)(ViPacketLookaside + 0x30);
@@ -573,7 +573,7 @@ BOOL FnDICPostCallback(HOOK_DEVICE_IO_CONTEXT *Context) {
 	if (Context) {
 		PFILE_OBJECT FileObject = (PFILE_OBJECT)Context->Object;
 		if (dicpostcabk) {
-			dicpostcabk(Context->IoControlCode, Context->InputBuffer, Context->InputBufferLength, Context->OutputBuffer, Context->OutputBufferLength);
+			dicpostcabk((ULONG64)Context->Object, Context->IoControlCode, Context->InputBuffer, Context->InputBufferLength, Context->OutputBuffer, Context->OutputBufferLength);
 		}
 		return TRUE;
 	}
@@ -585,7 +585,7 @@ VOID FnDICPreCallback(HOOK_DEVICE_IO_CONTEXT *aContext){
 		ExFreePool(Context.JmpPage);
 		ExFreePool(aContext);
 		if (dicprecabk) {
-			dicprecabk(Context.IoControlCode, Context.InputBuffer, Context.InputBufferLength, Context.OutputBuffer, Context.OutputBufferLength);
+			dicprecabk((ULONG64)Context.Object, Context.IoControlCode, Context.InputBuffer, Context.InputBufferLength, Context.OutputBuffer, Context.OutputBufferLength);
 		}
 	}
 }
