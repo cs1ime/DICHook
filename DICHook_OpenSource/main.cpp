@@ -33,6 +33,8 @@ VOID NtQueryVolumeInformationFileCallback(ULONG64 FsInformationClass, ULONG64 Fs
 	//此时irql == 2 !
 	// 
 	//修改分区序列号例子
+	
+	//
 	switch (FsInformationClass)
 	{ 
 	case FileFsVolumeInformation:
