@@ -1,3 +1,6 @@
+//author :cslime
+//https://github.com/cs1ime/DICHook
+
 #pragma once
 
 #ifndef __MYPEB_INCLUDED__
