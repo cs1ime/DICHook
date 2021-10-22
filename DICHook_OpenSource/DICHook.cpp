@@ -39,8 +39,6 @@ fndiccabk dicprecabk = 0;
 fnntqcabk ntqcabk = 0;
 fnExtraCallback pcabk = 0;
 
-#include "vtstruct.h"
-
 ULONG64 Search_FsInformation = 0;
 ULONG Search_Length = 0;
 ULONG64 Search_Object = 0;
@@ -608,16 +606,16 @@ BOOL DICPostCallback(HOOK_DEVICE_IO_CONTEXT* Context) {
 	//提升irql至2,关闭smap
 	IRQL_STATE state;
 	KRaiseIrqlToDpcOrHigh(&state);
-	Cr4 cr4;
+	CR4 cr4;
 	cr4.all = __readcr4();
-	bool smap = cr4.fields.smap == 1;
+	bool smap = cr4.SMAP == 1;
 	if (smap) {
-		cr4.fields.smap = 0;
+		cr4.SMAP = 0;
 		__writecr4(cr4.all);
 	}
 	BOOL ret = FnDICPostCallback(Context);
 	if (smap) {
-		cr4.fields.smap = 1;
+		cr4.SMAP = 1;
 		__writecr4(cr4.all);
 	}
 	KLowerIrqlToState(&state);
@@ -627,16 +625,16 @@ VOID DICPreCallback(HOOK_DEVICE_IO_CONTEXT* aContext) {
 	//提升irql至2,关闭smap
 	IRQL_STATE state;
 	KRaiseIrqlToDpcOrHigh(&state);
-	Cr4 cr4;
+	CR4 cr4;
 	cr4.all = __readcr4();
-	bool smap = cr4.fields.smap == 1;
+	bool smap = cr4.SMAP == 1;
 	if (smap) {
-		cr4.fields.smap = 0;
+		cr4.SMAP = 0;
 		__writecr4(cr4.all);
 	}
 	FnDICPreCallback(aContext);
 	if (smap) {
-		cr4.fields.smap = 1;
+		cr4.SMAP = 1;
 		__writecr4(cr4.all);
 	}
 	KLowerIrqlToState(&state);
@@ -645,16 +643,16 @@ VOID NtQueryPreCallback(HOOK_NTQUERY_CONTEXT* aContext) {
 	//提升irql至2,关闭smap
 	IRQL_STATE state;
 	KRaiseIrqlToDpcOrHigh(&state);
-	Cr4 cr4;
+	CR4 cr4;
 	cr4.all = __readcr4();
-	bool smap = cr4.fields.smap == 1;
+	bool smap = cr4.SMAP == 1;
 	if (smap) {
-		cr4.fields.smap = 0;
+		cr4.SMAP = 0;
 		__writecr4(cr4.all);
 	}
 	FnNtQueryPreCallback(aContext);
 	if (smap) {
-		cr4.fields.smap = 1;
+		cr4.SMAP = 1;
 		__writecr4(cr4.all);
 	}
 	KLowerIrqlToState(&state);

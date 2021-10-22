@@ -56,9 +56,6 @@
     <ClInclude Include="NtFunctionDefine.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="vtstruct.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="KernelAsm.asm">

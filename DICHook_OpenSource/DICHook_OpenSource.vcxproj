@@ -170,7 +170,6 @@
     <ClInclude Include="MyMemoryIo64.h" />
     <ClInclude Include="MyPEB.h" />
     <ClInclude Include="NtFunctionDefine.h" />
-    <ClInclude Include="vtstruct.h" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="KernelAsm.asm" />
