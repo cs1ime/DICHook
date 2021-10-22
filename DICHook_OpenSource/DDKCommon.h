@@ -32,28 +32,6 @@
 
 #define POOL_TAG 'enoN'
 
-typedef struct _XINPUT_GAMEPAD
-{
-	WORD                                wButtons;
-	BYTE                                bLeftTrigger;
-	BYTE                                bRightTrigger;
-	SHORT                               sThumbLX;
-	SHORT                               sThumbLY;
-	SHORT                               sThumbRX;
-	SHORT                               sThumbRY;
-} XINPUT_GAMEPAD, * PXINPUT_GAMEPAD;
-
-typedef struct _XINPUT_STATE
-{
-	DWORD                               dwPacketNumber;
-	XINPUT_GAMEPAD                      Gamepad;
-} XINPUT_STATE, * PXINPUT_STATE;
-
-typedef struct _KBuffer {
-	PVOID Address;
-	ULONG Size;
-}KBuffer, * PKBuffer;
-
 #ifdef __cplusplus
 extern "C"{
 #endif
@@ -61,9 +39,6 @@ extern "C"{
 LPWSTR WINAPI StrStrIW(LPCWSTR lpszStr, LPCWSTR lpszSearch);
 LPSTR WINAPI StrStrIA(LPCSTR lpszStr, LPCSTR lpszSearch);
 
-VOID Sleep(LONG Millsecond);
-ULONG64 GetRealTime();
-ULONG64 GetRealMicroTime();
 LPSTR WINAPI StrStrIA(LPCSTR lpszStr, LPCSTR lpszSearch);
 LPWSTR WINAPI StrStrIW(LPCWSTR lpszStr, LPCWSTR lpszSearch);
 LPWSTR WINAPI StrStrNIW(LPCWSTR lpszStr, LPCWSTR lpszSearch, SIZE_T max_chars);
@@ -91,8 +66,6 @@ typedef struct _IRQL_STATE {
 
 VOID KRaiseIrqlToDpcOrHigh(PIRQL_STATE state);
 VOID KLowerIrqlToState(PIRQL_STATE state);
-
-ULONG64 KGetRspBase();
 
 #ifdef __cplusplus
 }

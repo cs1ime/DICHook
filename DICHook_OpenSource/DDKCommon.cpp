@@ -3,6 +3,7 @@
 
 #include "DDKCommon.h"
 #include "MyMemoryIo64.h"
+
 #pragma comment(lib,"oldnames.lib")
 
 typedef struct _SBYTEINFO_3 {
@@ -35,52 +36,6 @@ void UnicodeToAnsi(LPCWSTR UnicodeStr, LPSTR AnsiStrBuffer, ULONG MaxLenth) {
 		AnsiStrBuffer[i] = UnicodeStr[i];
 	}
 	return;
-}
-
-static ULONG64 g_per = 0;
-static BOOL g_first = TRUE;
-ULONG64 GetRealTime() {
-	if (g_first) {
-		g_first = FALSE;
-
-		ULONG64 fir, sec;
-		fir = AsmRdtsc();
-		Sleep(50);
-		sec = AsmRdtsc();
-
-		g_per = (sec - fir) / 50;
-
-	}
-
-	return AsmRdtsc() / g_per;
-}
-static ULONG64 g_per_micro = 0;
-static BOOL g_first_micro = TRUE;
-ULONG64 GetRealMicroTime() {
-	if (g_first_micro) {
-		g_first_micro = FALSE;
-
-		ULONG64 fir, sec;
-		fir = AsmRdtsc();
-		Sleep(50);
-		sec = AsmRdtsc();
-
-		g_per_micro = (sec - fir) / 50000;
-
-	}
-
-	return AsmRdtsc() / g_per_micro;
-}
-VOID Sleep(LONG Millsecond) {
-	LARGE_INTEGER t;
-	t.QuadPart = Millsecond;
-	//µ¥Î»:100ÄÉÃë
-	t.QuadPart *= -10 * 1000;
-	KeDelayExecutionThread(KernelMode, FALSE, &t);
-	return;
-}
-VOID ForceSleep(LONG Millsecond) {
-	KeStallExecutionProcessor(Millsecond * 1000);
 }
 
 LPWSTR WINAPI StrStrIW(LPCWSTR lpszStr, LPCWSTR lpszSearch)
@@ -605,8 +560,3 @@ VOID KLowerIrqlToState(PIRQL_STATE state) {
 		__writecr8(state->old_irql);
 	}
 }
-
-ULONG64 KGetRspBase() {
-	return __readgsqword(0x1A8);
-}
-

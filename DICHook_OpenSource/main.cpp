@@ -52,7 +52,6 @@ VOID NtQueryVolumeInformationFileCallback(ULONG64 FsInformationClass, ULONG64 Fs
 }
 extern "C" NTSTATUS DriverEntry(PDRIVER_OBJECT drv, PUNICODE_STRING reg_path) {
 	Mmi_Init();
-	GetRealTime();//初始化GetRealTime
 
 	//设置是否启用 NtQueryVolumeInformationFile Hook,TRUE为开启,FALSE为关闭
 	//注意,win10 1507 - win10 1709不支持NtQueryVolumeInformationFile Hook,因为无法从堆栈中获取到参数
