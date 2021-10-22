@@ -34,7 +34,7 @@ VOID NtQueryVolumeInformationFileCallback(ULONG64 FsInformationClass, ULONG64 Fs
 	// 
 	//修改分区序列号例子
 	switch (FsInformationClass)
-	{
+	{ 
 	case FileFsVolumeInformation:
 	{
 		if (Length >= sizeof(FILE_FS_VOLUME_INFORMATION) && 
